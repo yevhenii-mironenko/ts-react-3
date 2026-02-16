@@ -71,7 +71,7 @@ type AddTimerAction = {
 
 type Action = StartTimersAction | StopTimersAction | AddTimerAction;
 
-type Timer = {
+export type Timer = {
   name: string;
   duration: number;
 };

@@ -1,15 +1,33 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
-import Button from './UI/Button.tsx';
-import Form, { FormHandle } from './UI/Form.tsx';
-import Input from './UI/Input.tsx';
+import Button from "./UI/Button.tsx";
+import Form, { FormHandle } from "./UI/Form.tsx";
+import Input from "./UI/Input.tsx";
+import { useTimersContext } from "../store/timers-context.tsx";
 
 export default function AddTimer() {
   const form = useRef<FormHandle>(null);
 
+  const { addTimer } = useTimersContext();
+
   function handleSaveTimer(data: unknown) {
     const extractedData = data as { name: string; duration: string };
-    console.log(extractedData);
+
+    if (extractedData.name.length < 3) {
+      alert("Name must be at least 3 characters long");
+      return;
+    }
+
+    if (Number(extractedData.duration) < 1) {
+      alert("Duration must be at least 1 second");
+      return;
+    }
+
+    addTimer({
+      name: extractedData.name,
+      duration: Number(extractedData.duration),
+    });
+
     form.current?.clear();
   }
 
