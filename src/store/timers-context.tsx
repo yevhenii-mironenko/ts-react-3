@@ -5,21 +5,7 @@ const initialState: TimersState = {
   timers: [],
 };
 
-type Action = {
-  type: "ADD_TIMER" | "START_TIMERS" | "STOP_TIMERS";
-  payload?: {
-    name: string;
-    duration: number;
-  };
-};
-
-function reducer(state: TimersState, action: Action): TimersState {
-  if (action.type === "ADD_TIMER") {
-    return {
-      ...state,
-      timers: [...state.timers],
-    };
-  }
+function timerReducer(state: TimersState, action: Action): TimersState {
   if (action.type === "START_TIMERS") {
     return {
       ...state,
@@ -32,17 +18,28 @@ function reducer(state: TimersState, action: Action): TimersState {
       isRunning: false,
     };
   }
+  if (action.type === "ADD_TIMER") {
+    return {
+      ...state,
+      timers: [
+        ...state.timers,
+        { name: action.payload.name, duration: action.payload.duration },
+      ],
+    };
+  }
+
   return state;
 }
 
 export default function TimersContextProvider({
   children,
 }: TimersContextProviderProps) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [timerState, dispatch] = useReducer(timerReducer, initialState);
 
   const ctx: TimersContextValue = {
-    timers: state.timers,
-    isRunning: state.isRunning,
+    timers: timerState.timers,
+    isRunning: timerState.isRunning,
+
     addTimer(timerData: Timer) {
       dispatch({ type: "ADD_TIMER", payload: timerData });
     },
@@ -58,6 +55,21 @@ export default function TimersContextProvider({
     <TimersContext.Provider value={ctx}>{children}</TimersContext.Provider>
   );
 }
+
+type StartTimersAction = {
+  type: "START_TIMERS";
+};
+
+type StopTimersAction = {
+  type: "STOP_TIMERS";
+};
+
+type AddTimerAction = {
+  type: "ADD_TIMER";
+  payload: Timer;
+};
+
+type Action = StartTimersAction | StopTimersAction | AddTimerAction;
 
 type Timer = {
   name: string;
