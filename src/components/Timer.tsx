@@ -15,7 +15,12 @@ export default function Timer({ name, duration }: Timer) {
   useEffect(() => {
     if (isRunning) {
       const timer = setInterval(function () {
-        setRemainingTime((prevTime) => prevTime - 100);
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 0) {
+            return prevTime;
+          }
+          return prevTime - 50;
+        });
       }, 100);
       interval.current = timer;
     } else if (interval.current) {
